@@ -1,19 +1,35 @@
-import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
+import { useState } from "react";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import axios from "axios";
+import { useNavigate } from "react-router";
 function FormComp(props) {
   const [validated, setValidated] = useState(false);
-
+  const navigate = useNavigate();
   const handleSubmit = (event) => {
     const form = event.currentTarget;
+    event.preventDefault();
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
-
-    setValidated(true);
+    const info = {
+      firstName: form.validationCustom01.value,
+      lastName: form.validationCustom02.value,
+      email: form.validationCustom03.value,
+      password: form.validationCustom04.value,
+    };
+    axios.post("http://localhost:3001/user/signup", info).then((response) => {
+      if (response.data === "Already exist") {
+        return alert("User already exist");
+      } else {
+        setValidated(true);
+        navigate("/home");
+        return;
+      }
+    });
   };
 
   return (
@@ -39,7 +55,6 @@ function FormComp(props) {
           />
           <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
         </Form.Group>
-       
       </Row>
       <Row className="mb-3">
         <Form.Group as={Col} md="6" controlId="validationCustom03">
@@ -51,13 +66,15 @@ function FormComp(props) {
         </Form.Group>
         <Form.Group as={Col} md="6" controlId="validationCustom04">
           <Form.Label>Password</Form.Label>
-          <Form.Control type="text" placeholder={"Password"} required />
+          <Form.Control type="password" placeholder={"Password"} required />
           <Form.Control.Feedback type="invalid">
             Please provide a valid password.
           </Form.Control.Feedback>
         </Form.Group>
       </Row>
-      <Button type="submit" size='md'>Register</Button>
+      <Button type="submit" size="md">
+        Register
+      </Button>
     </Form>
   );
 }

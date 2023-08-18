@@ -18,6 +18,7 @@ function FormCompUpload(props) {
     formData.set('doctorName', form.validationCustom01.value)
     formData.set('date', form.validationCustom02.value)
     formData.set('settedFileName', form.validationCustom04.value)
+    formData.set('userEmail', localStorage.getItem('email'))
     axios.post('http://localhost:3001/files/upload', formData)
     setValidated(true);
   };
